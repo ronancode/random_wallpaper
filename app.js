@@ -59,6 +59,12 @@ function randomWord() {
   return word;
 }
 
+function convertImg() {
+  var cmd = "C:/Program Files/ImageMagick-6.9.3-Q16/convert.exe";
+  var args = ['*.jpg', '-pointsize 25', '-gravity south', "-stroke '#000C'", '-strokewidth 4', "-annotate 0 '" + random1 + " " + random2 + "'", '-stroke none', '-fill white', "-annotate 0 '" + random1 + " " + random2 + "'", random1 + "-" + random2 + ".jpg"]
+  child_process.execFileSync(cmd, args, {encoding: 'utf8' } );
+}
+
 function foo() {
   var host = 'images.search.yahoo.com';
   random1 = randomWord();
@@ -80,4 +86,5 @@ function foo() {
 
 setInterval(function() {
   foo();
-}, 60000);
+  convertImg();
+}, 5000);
