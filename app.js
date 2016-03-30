@@ -9,6 +9,7 @@ var random2 = '';
 var wget_attempts = 0;
 var http_attempts = 0;
 
+var savepath = './wallpapers/'
 
 function callback(response) {
   var str = '';
@@ -19,10 +20,10 @@ function callback(response) {
 
   var end_func = function () {
     try {
-      var files = fs.readdirSync('D:/GitHub/random_wallpaper/');
-      // files.forEach(function(f) {
-      //   fs.unlink('D:/GitHub/random_wallpaper/' + f)
-      // });
+      var files = fs.readdirSync('D:/GitHub/random_wallpaper/wallpapers/');
+      files.forEach(function(f) {
+        fs.unlink('D:/GitHub/random_wallpaper/wallpapers/' + f)
+      });
       var raw_urls = str.match(/imgurl=.+?&/g);
       var clean_urls = raw_urls.map(function(url) {
         return url.substring(7, url.length - 1);
@@ -31,8 +32,7 @@ function callback(response) {
       //var randPick = Math.floor((urls.length - 1) * Math.random());
       var url = urls[0];
       var cmd = "D:/Program Files/GnuWin32/bin/wget.exe";
-      var img_file = "D:/GitHub/random_wallpaper/" + random1 + "-" + random2 + ".jpg";
-//      var img_file = "C:/Users/Ronan Rice/Documents/Wallpapers/" + random1 + ".jpg";
+      var img_file = "D:/GitHub/random_wallpaper/wallpapers/" + random1 + "-" + random2 + ".jpg";
       var args = ['-O', img_file, url];
       child_process.execFileSync(cmd, args, {encoding: 'utf8' });
       wget_attempts = 0;
@@ -60,17 +60,17 @@ function randomWord() {
 }
 
 function convertImg() {
-  var args = 'convert ' + random1 + '-' + random2 + '.jpg -pointsize 25 -gravity south -stroke "#000C" -strokewidth 4 -annotate 0 "' + random1 + ' ' + random2 + '" -stroke none -fill white -annotate 0 "' + random1 + ' ' + random2 + '" ' + random1 + "-" + random2 + ".jpg";
+  var args = 'convert ./wallpapers/' + random1 + '-' + random2 + '.jpg -pointsize 25 -gravity south -stroke "#000C" -strokewidth 4 -annotate 0 "' + random1 + ' ' + random2 + '" -stroke none -fill white -annotate 0 "' + random1 + ' ' + random2 + '" ./wallpapers/' + random1 + "-" + random2 + ".jpg";
   child_process.execSync(args);
 }
 
 function foo() {
-  //var host = 'images.search.yahoo.com';
-  var host = 'images.google.com';
+  var host = 'images.search.yahoo.com';
+  // var host = 'images.google.com';
   random1 = randomWord();
   random2 = randomWord();
-  //var path = '/search/images?p=' + random1 + '+' + random2 + '&imgsz=large';
-  var path = '/search?tbm=isch&q=' + random1 + '+' + '&tbs=isz:l'
+  var path = '/search/images?p=' + random1 + '+' + random2 + '&imgsz=large';
+  // var path = '/search?tbm=isch&q=' + random1 + '+' + '&tbs=isz:l'
   var options = {};
   options.host = host;
   options.path = path;
