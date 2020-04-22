@@ -1,5 +1,6 @@
 var http = require('http');
 var fs = require('fs');
+var util = require('util');
 var child_process = require('child_process');
 var exec = child_process.exec;
 
@@ -10,6 +11,7 @@ var wget_attempts = 0;
 var http_attempts = 0;
 
 var savepath = './wallpapers/'
+var log_file = fs.createWriteStream("./debug.log", {flags : 'w'});
 
 function callback(response) {
   var str = '';
@@ -35,10 +37,13 @@ function callback(response) {
       var img_file = "D:/GitHub/random_wallpaper/wallpapers/" + random1 + "-" + random2 + ".jpg";
       var args = ['-O', img_file, url];
       child_process.execFileSync(cmd, args, {encoding: 'utf8' });
+      var log_print = random1 + ' ' + random2 + ': ' + url + '\n';
+      log_file.write(util.format(log_print));      
       wget_attempts = 0;
       http_attempts = 0;     
     } catch (err) {
       console.log(err, "Error recieved");
+      log_file.write(util.format(err) + '\n');
       wget_attempts += 1;
       if (wget_attempts < 3) {
         foo();
@@ -50,7 +55,7 @@ function callback(response) {
 }
 
 function randomWord() {
-  var index = Math.floor(Math.random() * 19000);
+  var index = Math.floor(Math.random() * 20000);
   var cmd = "D:/Program Files/GnuWin32/bin/sed.exe";
   var args = [index + 'q;d', './words.txt'];
   var dirty_word = child_process.execFileSync(cmd, args, { encoding: 'utf8' });
@@ -66,17 +71,16 @@ function convertImg() {
 
 function foo() {
   var host = 'images.search.yahoo.com';
-  // var host = 'images.google.com';
   random1 = randomWord();
   random2 = randomWord();
   var path = '/search/images?p=' + random1 + '+' + random2 + '&imgsz=large';
-  // var path = '/search?tbm=isch&q=' + random1 + '+' + '&tbs=isz:l'
   var options = {};
   options.host = host;
   options.path = path;
   var request = http.request(options, callback)
   request.on('error', function(err) {
     console.log(err);
+    log_file.write(util.format(err) + '\n');
     http_attempts += 1;
     if (http_attempts < 3) {
       foo();
@@ -85,7 +89,12 @@ function foo() {
   request.end();
 }
 
+// setInterval(function() {
+//   foo();
+//   setTimeout(convertImg,5000);
+// }, 10000);
+
 setInterval(function() {
   foo();
   setTimeout(convertImg,5000);
-}, 10000);
+}, 1800000);

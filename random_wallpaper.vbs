@@ -1,0 +1,1 @@
+CreateObject("Wscript.Shell").Run "random_wallpaper.bat", 0, True
